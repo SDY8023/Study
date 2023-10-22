@@ -22,15 +22,15 @@ object Test {
     import spark.sqlContext.implicits._
 
     val sc = spark.sparkContext
-    val rdd1 = sc.textFile("/root/testData/create1.txt",10)
+    val rdd1 = sc.textFile("/user/hive/warehouse/test.db/dwd_fact_ft_stdf_parametric_data/lot=test1/guid=guid1/create1.txt",10)
     val rdd2: RDD[ParametricData] = rdd1.map(_.split("|")).map(x => ParametricData(x(0).toInt, x(1), x(2), x(3), x(4), x(5), x(6)
-      , x(7), x(8), x(9), x(10), x(11), x(12), x(13), x(14).toLong, x(15), x(16), x(17)))
+      , x(7), x(8), x(9), x(10), x(11), x(12), x(13)))
     val ds1 = rdd2.toDS()
     println("==================="+rdd2.getNumPartitions)
 
-    val value: KeyValueGroupedDataset[Int, ParametricData] = ds1.groupByKey(_.id % 10)
-    val value1 = value.count()
-    value1.show()
+    ds1.groupByKey(_.id % 10)
+
+
   }
 
 }

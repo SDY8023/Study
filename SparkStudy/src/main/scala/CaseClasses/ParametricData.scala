@@ -9,5 +9,4 @@ package CaseClasses
 case class ParametricData(id:Int, testGuid:String, testTxt:String, testNum:String,
                           testType:String, siteNum:String, queueId:String, partId:String,
                           pinIndex:String, pinValue:String, testIndex:String, testValue:String,
-                          transTestValue:String, testResult:String, createTime:Long, testSuite:String,
-                          vectorName:String, vectorPattern:String)
+                          transTestValue:String, testResult:String)
