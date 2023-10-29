@@ -3,10 +3,11 @@ package SeniorStudy.CompareTest;
 import java.util.Arrays;
 
 /**
- * @author 18438
- * @date 2023/8/19 17:58
- * @description
- */
+ * @ClassName Test1
+ * @Description
+ * @Author SDY
+ * @Date 2023/8/20 9:13
+ **/
 public class Test1 {
     public static void main(String[] args) {
         Goods[] goods = new Goods[4];

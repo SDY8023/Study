@@ -1,10 +1,11 @@
 package SeniorStudy.CompareTest;
 
 /**
- * @author 18438
- * @date 2023/8/19 17:51
- * @description
- */
+ * @ClassName Goods
+ * @Description
+ * @Author SDY
+ * @Date 2023/8/20 9:12
+ **/
 public class Goods implements Comparable{
     private String name;
     private double price;
@@ -53,4 +54,5 @@ public class Goods implements Comparable{
     public String toString() {
         return "name="+this.name+" price="+this.price;
     }
+
 }
