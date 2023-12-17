@@ -7,10 +7,14 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="JavaStudy" />
+        <module name="KafkaStudy" />
         <module name="FlinkStudy" />
         <module name="SparkStudy" />
         <module name="ScalaStudy" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="HotItemsAnalysis" target="1.8" />
+    </bytecodeTargetLevel>
   </component>
 </project>
