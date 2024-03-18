@@ -1,6 +1,7 @@
 package SparkTest
 
 import org.apache.log4j.{Level, Logger}
+import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.{SparkConf, SparkContext}
 
@@ -17,7 +18,7 @@ object Test3 {
 
   def main(args: Array[String]): Unit = {
     Logger.getLogger("org.apache.spark").setLevel(Level.ERROR)
-    practice3()
+    practice7()
   }
 
   /**
@@ -49,6 +50,50 @@ object Test3 {
     rdd1.flatMap(x => {
       List(Math.pow(x,2).toInt,Math.pow(x,3).toInt)
     })foreach(println)
+
+  }
+
+  /**
+   * 4、创建一个 4 个分区的 RDD数据为Array(10,20,30,40,50,60)，使用glom将每个分区的数据放到一个数组
+   */
+  def practice4(): Unit = {
+    println("=====practice4=====")
+    var rdd1: RDD[Int] = sc.makeRDD(Array(10, 20, 30, 40, 50, 60), 4)
+    val rdd2: RDD[Array[Int]] = rdd1.glom()
+    rdd2.foreach(x => println(x.mkString("Array()")))
+
+  }
+
+  /**
+   * 5、创建一个 RDD数据为Array(1, 3, 4, 20, 4, 5, 8)，按照元素的奇偶性进行分组
+   */
+  def practice5(): Unit = {
+    println("=====practice5=====")
+    val rdd1: RDD[(String,Int)] = sc.makeRDD(Array(("a",1), ("b",2), ("c",3), ("a",20), ("b",4), ("b",5), ("c",8)))
+    val rdd2 = rdd1.groupBy(_._1)
+    rdd2.foreach(x => println(x))
+
+  }
+
+  /**
+   * 创建一个 RDD（由字符串组成）Array(“xiaoli”, “laoli”, “laowang”, “xiaocang”, “xiaojing”, “xiaokong”)，过滤出一个新 RDD（包含“xiao”子串）
+   */
+  def practice6(): Unit = {
+    println("=====practice6=====")
+    val rdd1 = sc.makeRDD(Array("xiaoli", "laoli", "laowang", "xiaocang", "xiaojing", "xiaokong"))
+    val rdd2 = rdd1.filter(_.contains("xiaoli"))
+    rdd2.foreach(println)
+
+  }
+
+  /**
+   * 7、创建一个 RDD数据为1 to 10，请使用sample不放回抽样
+   */
+  def practice7(): Unit = {
+    println("=====practice7=====")
+    val rdd1 = sc.parallelize(1 to 10)
+    val rdd2: RDD[Int] = rdd1.sample(withReplacement = false, 0.5)
+    rdd2.foreach(println)
 
   }
 
