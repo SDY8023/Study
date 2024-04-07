@@ -20,7 +20,7 @@ object HotItems {
     // 控制输出不乱序
     env.setParallelism(4)
     // 读取数据源并进行转化
-    val resource: DataStream[UserBehavior] = env.readTextFile("D:\\File\\yang\\study\\尚硅谷\\flink\\UserBehavior.csv")
+    val resource: DataStream[UserBehavior] = env.readTextFile("D:\\study\\code\\Study\\FlinkStudy\\src\\main\\resources\\UserBehavior.csv")
       .map(l => {
         val lineArray = l.split(",")
         UserBehavior(lineArray(0).toLong, lineArray(1).toLong, lineArray(2).toInt, lineArray(3).toString, lineArray(4).toLong)
