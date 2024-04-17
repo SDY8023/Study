@@ -26,7 +26,6 @@ object DataSourceFrom {
     properties.setProperty("auto.offset.reset", "latest")
     // 读取数据
     new FlinkKafkaConsumer[String]("test2", new SimpleStringSchema(), properties)
-
   }
 
 }
