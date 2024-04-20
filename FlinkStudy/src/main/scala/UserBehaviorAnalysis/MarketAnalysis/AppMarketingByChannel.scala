@@ -17,7 +17,7 @@ object AppMarketingByChannel {
   def main(args: Array[String]): Unit = {
     val env = StreamExecutionEnvironment.getExecutionEnvironment
     env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime)
-    env.setParallelism(1)
+    env.setParallelism(2)
 
     val stream: DataStream[MarketingUserBehavior] = env.addSource(new SimulateEventSource(1000000000))
       .assignAscendingTimestamps(_.timestamp)

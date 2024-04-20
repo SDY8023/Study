@@ -23,7 +23,7 @@ class MarketingCountByChannel extends ProcessWindowFunction[((String,String),Lon
     val count = elements.size
     //out.collect(MarketingCountView(formatTs(startTs),formatTs(endTs),channel,behaviorType,count))
     val result = new StringBuffer()
-    result.append(s"startTs:${startTs} - endTs:${endTs}\n")
+    result.append(s"startTs:${formatTs(startTs)} - endTs:${formatTs(endTs)}\n")
       .append(s"channel:${channel},behaviorType:${behaviorType},count:${count}\n")
 
     out.collect(result.toString)
