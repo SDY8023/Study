@@ -1,6 +1,7 @@
 package UserBehaviorAnalysis.MarketAnalysis.function
 
 import UserBehaviorAnalysis.MarketAnalysis.bean.MarketingCountView
+import units.DateFormatUnits.formatTs
 import org.apache.flink.streaming.api.scala.function.ProcessWindowFunction
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow
 import org.apache.flink.util.Collector
@@ -30,8 +31,4 @@ class MarketingCountByChannel extends ProcessWindowFunction[((String,String),Lon
 
   }
 
-  private def formatTs(ts:Long) ={
-    val df = new SimpleDateFormat("yyyy/MM/dd-HH:mm:ss")
-    df.format(new Date(ts))
-  }
 }
