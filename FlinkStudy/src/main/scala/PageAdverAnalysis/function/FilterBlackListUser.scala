@@ -1,8 +1,10 @@
 package PageAdverAnalysis.function
 
-import PageAdverAnalysis.bean.AdClickLog
+import PageAdverAnalysis.bean.{AdClickLog, BlackListWarning}
 import org.apache.flink.api.common.state.{ValueState, ValueStateDescriptor}
+import org.apache.flink.api.scala.createTypeInformation
 import org.apache.flink.streaming.api.functions.KeyedProcessFunction
+import org.apache.flink.streaming.api.scala.OutputTag
 import org.apache.flink.util.Collector
 
 /**
@@ -12,6 +14,7 @@ import org.apache.flink.util.Collector
  * @Date: 2024/4/23 22:11
  * */
 class FilterBlackListUser(maxCount:Long) extends KeyedProcessFunction[(Long,Long),AdClickLog,AdClickLog]{
+  val blackListOutputTag = new OutputTag[BlackListWarning]("blacklist")
   // 保存当前用户对当前广告的点击量
   lazy val countState: ValueState[Long] = getRuntimeContext.getState(new ValueStateDescriptor[Long]("count-state", classOf[Long]))
   // 标记前(用户,广告)作为key,是否第一次发送到黑名单
@@ -26,6 +29,25 @@ class FilterBlackListUser(maxCount:Long) extends KeyedProcessFunction[(Long,Long
       resetTime.update(ts)
       ctx.timerService().registerProcessingTimeTimer(ts)
     }
+    // 若计数已经超上限，则加入黑名单，用侧输出流输出报警信息
+    if(curCount > maxCount){
+      if(!firstSent.value()){
+        firstSent.update(true)
+        ctx.output(blackListOutputTag,BlackListWarning(value.userId,value.adId,"Click over"+ maxCount + " times today"))
+      }
+      return
+    }
+    // 点击数加1
+    countState.update( curCount + 1)
+    out.collect(value)
+  }
+
+  override def onTimer(timestamp: Long, ctx: KeyedProcessFunction[(Long, Long), AdClickLog, AdClickLog]#OnTimerContext, out: Collector[AdClickLog]): Unit = {
+    if(timestamp == resetTime.value()){
+      firstSent.clear()
+      countState.clear()
+    }
 
   }
+
 }

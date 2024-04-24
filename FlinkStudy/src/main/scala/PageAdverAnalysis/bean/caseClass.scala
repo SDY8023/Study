@@ -10,4 +10,4 @@ case class AdClickLog(userId:Long,adId:Long,province:String,city:String,timeStam
 
 case class CountByProvince(windowEnd:String,province:String,count:Long)
 
-case class BlackListWarning(userId:String,adId:Long,msg:String)
+case class BlackListWarning(userId:Long,adId:Long,msg:String)

@@ -1,9 +1,11 @@
 package PageAdverAnalysis
 
 import PageAdverAnalysis.bean.{AdClickLog, BlackListWarning}
+import PageAdverAnalysis.function.{CountAgg, CountResult, FilterBlackListUser}
 import org.apache.flink.api.scala.createTypeInformation
 import org.apache.flink.streaming.api.TimeCharacteristic
 import org.apache.flink.streaming.api.scala.{DataStream, OutputTag, StreamExecutionEnvironment}
+import org.apache.flink.streaming.api.windowing.time.Time
 
 /**
  * @ClassName: AdStatisticeByGeoBlack
@@ -24,8 +26,18 @@ object AdStatisticsByGeoBlack {
         AdClickLog(dataArray(0).toLong, dataArray(1).toLong, dataArray(2), dataArray(3),dataArray(4).toLong)
       }).assignAscendingTimestamps(_.timeStamp)
 
-    dataResource.keyBy(logData => (logData.userId,logData.adId))
-      .process()
+    val filterBlackListStream = dataResource.keyBy(logData => (logData.userId, logData.adId))
+      .process(new FilterBlackListUser(100))
+    filterBlackListStream
+      .keyBy(_.province)
+      .timeWindow(Time.hours(1),Time.seconds(5))
+      .aggregate(new CountAgg(),new CountResult)
+      .print()
+    filterBlackListStream.getSideOutput(blackListOutputTag)
+      .print("black list")
+
+    env.execute("ad statistics job")
+
   }
 
 }
