@@ -19,7 +19,7 @@ public class Test11 {
         for (int i = 0; i < data.length; i++) {
             height[i] = Integer.parseInt(data[i]);
         }
-        System.out.println(maxArea(height));
+        System.out.println(maxArea2(height));
 
     }
 
@@ -35,5 +35,22 @@ public class Test11 {
         }
         return result;
 
+    }
+
+    public static int maxArea2(int[] height){
+        int left = 0;
+        int right = height.length - 1;
+        int res = 0;
+        while (left < right){
+            int h = Math.min(height[left],height[right]);
+            int temp = (right- left) * h;
+            res = Math.max(res,temp);
+            if(height[left] < height[right]){
+                left ++;
+            }else{
+                right --;
+            }
+        }
+        return res;
     }
 }
