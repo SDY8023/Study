@@ -1,42 +1,32 @@
 package OdTest;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
 /**
- * @ClassName Test27
- * @Description
- * @Author SDY
- * @Date 2024/7/9 20:17
- **/
+ * @author 18438
+ * @date 2024/8/4 10:42
+ * @description
+ */
 public class Test27 {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        String[] data = sc.next().split(",");
-
-        int[] nums = new int[data.length];
-        for (int i = 0; i < data.length; i++) {
-            nums[i] = Integer.parseInt(data[i]);
+        String data1 = sc.next();
+        String[] split = data1.split(",");
+        int[] nums = new int[split.length];
+        for (int i = 0; i < split.length; i++) {
+            nums[i] = Integer.parseInt(split[i]);
         }
-        removeElement(nums,sc.nextInt());
+        int target = sc.nextInt();
+        System.out.println(search(nums,target));
+
     }
 
-    public static int removeElement(int[] nums, int val) {
-        List<Integer> data = new ArrayList<>();
-
+    public static int search(int[] nums, int target) {
         for (int i = 0; i < nums.length; i++) {
-            if(nums[i] != val){
-                data.add(nums[i]);
+            if(nums[i] == target){
+                return i;
             }
         }
-        for (int i = 0; i < data.size(); i++) {
-            nums[i] = data.get(i);
-        }
-        System.out.println(data.size());
-        for (int num : nums) {
-            System.out.println(num);
-        }
-        return data.size();
+        return -1;
     }
 }
