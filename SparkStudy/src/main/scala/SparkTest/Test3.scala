@@ -16,11 +16,6 @@ object Test3 {
   conf.setAppName("test")
   val sc = new SparkContext(conf)
 
-  def main(args: Array[String]): Unit = {
-    Logger.getLogger("org.apache.spark").setLevel(Level.ERROR)
-    practice7()
-  }
-
   /**
    * 创建一个1-10数组的RDD，将所有元素*2形成新的RDD
    */
@@ -94,9 +89,62 @@ object Test3 {
     val rdd1 = sc.parallelize(1 to 10)
     val rdd2: RDD[Int] = rdd1.sample(withReplacement = false, 0.5)
     rdd2.foreach(println)
+  }
+
+  /**
+   * 创建一个 RDD数据为 1 to 10，请使用sample放回抽样
+   */
+  def practice8(): Unit = {
+    val inputRdd: RDD[Int] = sc.parallelize(1 to 10)
+    val value: RDD[Int] = inputRdd.sample(withReplacement = true, 0.5)
+    value.foreach(println)
+  }
+
+  def practice9(): Unit = {
+    val inputRdd: RDD[Int] = sc.parallelize(Array(10, 10, 2, 5, 3, 5, 3, 6, 9, 1))
+    inputRdd.foreach(println)
+    println("=======================")
+    val value = inputRdd.distinct()
+    value.foreach(println)
+  }
+
+  def practice10(): Unit = {
+    val inputRdd: RDD[Int] = sc.parallelize(0 to 100,5)
+    val value = inputRdd.repartition(2)
+    value.foreach(println)
 
   }
 
+  /**
+   * 创建一个 RDD数据为1,3,4,10,4,6,9,20,30,16,请给RDD进行分别进行升序和降序排列
+   */
+  def practice11(): Unit = {
+    val inputRdd = sc.parallelize(Seq(1, 3, 4, 10, 4, 6, 9, 20, 30, 16), 1)
+    inputRdd.sortBy(x => x).foreach(println(_))
+    println("====================")
+    inputRdd.sortBy(x => x,ascending = false).foreach(println)
+  }
+
+  /**
+   * 创建两个RDD，分别为rdd1和rdd2数据分别为1 to 6和4 to 10，求并集
+   */
+  def practice12(): Unit = {
+    val rdd1 = sc.parallelize(1 to 6,6)
+    val rdd2 = sc.parallelize(4 to 10,3)
+    println("=========并集==========")
+    rdd1.intersection(rdd2).foreach(println)
+    println("=========差集rdd1 -> rdd2==========")
+    rdd1.subtract(rdd2,2).foreach(println)
+    println("=========差集rdd2 -> rdd1==========")
+    rdd2.subtract(rdd1,1).foreach(println)
+
+
+  }
+
+  def main(args: Array[String]): Unit = {
+    Logger.getLogger("org.apache.spark").setLevel(Level.ERROR)
+    practice12()
+  }
 
 
 }
