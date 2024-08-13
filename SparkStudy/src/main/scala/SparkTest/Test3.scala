@@ -71,7 +71,7 @@ object Test3 {
   }
 
   /**
-   * 创建一个 RDD（由字符串组成）Array(“xiaoli”, “laoli”, “laowang”, “xiaocang”, “xiaojing”, “xiaokong”)，过滤出一个新 RDD（包含“xiao”子串）
+   * 创建一个 RDD（由字符串组成）Array("xiaoli", "laoli", "laowang", "xiaocang", "xiaojing", "xiaokong")，过滤出一个新 RDD（包含"xiao"子串）
    */
   def practice6(): Unit = {
     println("=====practice6=====")
@@ -137,13 +137,80 @@ object Test3 {
     rdd1.subtract(rdd2,2).foreach(println)
     println("=========差集rdd2 -> rdd1==========")
     rdd2.subtract(rdd1,1).foreach(println)
-
-
+    println("=========交集rdd2 rdd1==========")
+    rdd1.union(rdd2).foreach(println)
+    println("=========笛卡尔集rdd2 rdd1==========")
+    val value: RDD[(Int, Int)] = rdd1.cartesian(rdd2)
+    value.sortBy(_._1).foreach(println)
   }
+
+  /**
+   * 创建两个RDD，分别为rdd1和rdd2数据分别为1 to 5和11 to 15，对两个RDD拉链操作
+   * (1,2,3,4,5)
+   * (11,12,13,14,15)
+   * 拉链操作后
+   * ((1,11),(2,12),(3,13),(4,14),(5,15))
+   * 拉链操作必须两个rdd的元素数量相同
+   */
+  def practice17(): Unit ={
+    val rdd1 = sc.parallelize(1 to 5)
+    val rdd2 = sc.parallelize(11 to 15)
+    val value: RDD[(Int, Int)] = rdd1.zip(rdd2)
+    value.foreach(println)
+  }
+
+  /**
+   * 创建一个RDD数据为List((“female”,1),(“male”,5),(“female”,5),(“male”,2))，请计算出female和male的总数分别为多少
+   */
+  def practice18(): Unit ={
+    val rdd = sc.parallelize(List(("female", 1), ("male", 5), ("female", 5), ("male", 2)))
+    rdd.reduceByKey(_+_).foreach(println)
+  }
+
+  /**
+   * 创建一个RDD数据为List(("female",1),("male",5),("female",5),("male",2))，请计算出female和male的总数分别为多少
+   */
+  def practice19(): Unit ={
+    val rdd1 = sc.parallelize(List(("a", 3), ("a", 2), ("c", 4), ("b", 3), ("c", 6), ("c", 8)),2)
+    rdd1.foreachPartition(x => {
+      val list = x.toList
+      println(s"partition ${list}")
+    })
+
+    println("========aggregateByKey=============")
+    rdd1.aggregateByKey(0)((tmp,item) => {
+      println(tmp,item,"---")
+      Math.max(tmp,item)
+    },
+      (tmp,result) => {
+        println(tmp,result,"---")
+        tmp + result
+    }
+    ).foreach(println)
+
+    println("=========groupByKey=========")
+    rdd1.groupBy(_._1)
+      .foreach(x => {
+        println(s"k:${x._1} v:${x._2.toList.minBy(_._2)}")
+      })
+  }
+
+
+  /**
+   * 创建一个有两个分区的 pairRDD数据为Array((“a”, 88), (“b”, 95), (“a”, 91), (“b”, 93), (“a”, 95), (“b”, 98))，根据 key 计算每种 key 的value的平均值
+   */
+  def practice20(): Unit ={
+    val pairRDD = sc.parallelize(Array(("a", 88), ("b", 95), ("a", 91), ("b", 93), ("a", 95), ("b", 98)), 2)
+    pairRDD.groupByKey()
+      .map(x => {
+        println(s"k:${x._1}  v:${x._2.sum / x._2.size}")
+      }).foreach(println)
+  }
+
 
   def main(args: Array[String]): Unit = {
     Logger.getLogger("org.apache.spark").setLevel(Level.ERROR)
-    practice12()
+    practice20()
   }
 
 
