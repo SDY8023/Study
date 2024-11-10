@@ -1,9 +1,9 @@
 package SparkTest
 
 import CaseClasses.ParametricData
+import org.apache.spark.SparkConf
 import org.apache.spark.rdd.RDD
-import org.apache.spark.{SparkConf}
-import org.apache.spark.sql.{KeyValueGroupedDataset, SparkSession}
+import org.apache.spark.sql.SparkSession
 /**
  * @ClassName: Test
  * @Auther: SDY
