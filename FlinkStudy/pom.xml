@@ -36,4 +36,10 @@
         </dependency>
     </dependencies>
 
+    <build>
+        <finalName>
+            flink-study-test
+        </finalName>
+    </build>
+
 </project>
