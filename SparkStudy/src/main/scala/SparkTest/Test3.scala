@@ -207,10 +207,27 @@ object Test3 {
       }).foreach(println)
   }
 
+  /**
+   * 读取本地文件words.txt,统计出每个单词的个数，保存数据到 hdfs 上
+   */
+  def practice21(): Unit = {
+    val rdd1 = sc.textFile("D:\\File\\yang\\study\\test.txt")
+    rdd1.flatMap(x => x.split(" "))
+      .map(x => (x,1))
+      .groupBy(_._1)
+      .map(x => {
+        var count = 0
+        x._2.foreach(a => count += a._2)
+        (x._1,count)
+      }).saveAsTextFile("D:\\File\\yang\\study\\test2.txt")
+
+
+  }
+
 
   def main(args: Array[String]): Unit = {
     Logger.getLogger("org.apache.spark").setLevel(Level.ERROR)
-    practice20()
+    practice21()
   }
 
 
