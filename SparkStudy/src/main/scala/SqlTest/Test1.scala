@@ -10,17 +10,6 @@ import org.apache.spark.sql.SparkSession
  */
 case class T1(a:Int,b:String,c:Int)
 object Test1 {
-  def main(args: Array[String]): Unit = {
-    val conf = new SparkConf()
-    conf.setMaster("local[*]")
-    conf.setAppName("TestSql")
-    val spark = SparkSession.builder()
-      .config(conf)
-      .getOrCreate()
-    spark.sparkContext.setLogLevel("error")
-    practice5(spark)
-  }
-
   /**
    * 行列转换
    */
@@ -284,4 +273,91 @@ object Test1 {
          |""".stripMargin).show(1000)
   }
 
+  /**
+   * 十四、业务逻辑的分类与抽象--时效
+   * @param spark
+   */
+  def practice6(spark:SparkSession): Unit = {
+    import spark.implicits._
+    val data1 = Seq(
+      TT1("2017-04-13", "1"),
+      TT1("2017-04-14", "1"),
+      TT1("2017-04-15", "0"),
+      TT1("2017-04-16", "0"),
+      TT1("2017-04-17", "1")
+    )
+    data1.toDF("date_id","is_work").createOrReplaceTempView("d_date")
+    val data2 = Seq(
+      TT2("1", "申请", "2017-04-14 18:03:00"),
+      TT2("1", "通过", "2017-04-17 09:43:00"),
+      TT2("2", "申请", "2017-04-13 17:02:00"),
+      TT2("2", "通过", "2017-04-15 09:42:00")
+    )
+    data2.toDF("a","b","c").createOrReplaceTempView("t14")
+
+    println("问题一：计算上表中从申请到通过占用的工作时长")
+
+    val df1 = spark.sql(
+      s"""
+         |select a,apply_time,pass_time,datediff(substr(pass_time,1,10),substr(apply_time,1,10)) as time_diff
+         |from
+         |(
+         |  select a,max(case when b = '申请' then c end) as apply_time,
+         |  max(case when b = '通过' then c end) as pass_time
+         |  from t14
+         |  group by a
+         |)t1
+         |""".stripMargin)
+    df1.show(false)
+
+  }
+
+  def practice7(spark:SparkSession): Unit = {
+    import spark.implicits._
+    val data1 = Seq(
+      TT3("1", "11", "zhao", "20140101"),
+      TT3("2", "22", "qian", "20140102"),
+      TT3("3", "33", "sun", "20140103"),
+      TT3("4", "44", "li", "20140104")
+    )
+    val data2 = Seq(
+      TT3("1", "11", "zhao", "20140101"),
+      TT3("2", "999", "test", "20220323"),
+      TT3("3", "999", "test", "20220323"),
+      TT3("4", "44", "li", "20140104"),
+      TT3("5", "55", "wang", "20140105")
+    )
+    data1.toDF().createOrReplaceTempView("student")
+    data2.toDF().createOrReplaceTempView("student_temp")
+
+    spark.sql(
+      s"""
+         |select b.id,
+         |coalesce(b.age,a.age) as age,
+         |b.name,
+         |coalesce(b.dt,a.dt)
+         |from student a
+         |full outer join
+         |student_temp b
+         |on a.id = b.id
+         |""".stripMargin).show()
+
+
+  }
+
+  def main(args: Array[String]): Unit = {
+    val conf = new SparkConf()
+    conf.setMaster("local[*]")
+    conf.setAppName("TestSql")
+    val spark = SparkSession.builder()
+      .config(conf)
+      .getOrCreate()
+    spark.sparkContext.setLogLevel("error")
+    practice7(spark)
+  }
+
 }
+
+case class TT1(date_id:String,is_work:String)
+case class TT2(a:String,b:String,c:String)
+case class TT3(id:String,age:String,name:String,dt:String)
