@@ -14,6 +14,7 @@
         <module>SparkStudy</module>
         <module>ScalaStudy</module>
         <module>KafkaStudy</module>
+        <module>Neo4jStudy</module>
     </modules>
 
     <properties>

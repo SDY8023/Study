@@ -10,6 +10,7 @@
         <module name="KafkaStudy" />
         <module name="FlinkStudy" />
         <module name="SparkStudy" />
+        <module name="Neo4jStudy" />
         <module name="ScalaStudy" />
       </profile>
     </annotationProcessing>
